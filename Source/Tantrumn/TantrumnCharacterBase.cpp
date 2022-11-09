@@ -2,6 +2,7 @@
 
 
 #include "TantrumnCharacterBase.h"
+#include "TantrumnPlayerController.h"
 
 // Sets default values
 ATantrumnCharacterBase::ATantrumnCharacterBase()
@@ -32,3 +33,25 @@ void ATantrumnCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerIn
 
 }
 
+void ATantrumnCharacterBase::Landed(const FHitResult& Hit)
+{
+	Super::Landed(Hit);
+
+	//custom landed code
+	ATantrumnPlayerController* TantrumnPlayerController = GetController<ATantrumnPlayerController>();
+	if (TantrumnPlayerController)
+	{
+		const float FallImpactSpeed = GetVelocity().Z;
+		if (FallImpactSpeed < MinImpactSpeed)
+		{
+			return;
+		}
+
+		const float DeltaImpact = MaxImpactSpeed - MinImpactSpeed;
+		const float FallRatio = FMath::Clamp((FallImpactSpeed - MinImpactSpeed) / DeltaImpact, 0.0f, 1.0f);
+		const bool bAffectSmall = FallRatio <= 0.5;
+		const bool bAffectLarge = FallRatio > 0.5;
+		TantrumnPlayerController->PlayDynamicForceFeedback(FallRatio, 0.5f, bAffectLarge, bAffectSmall, bAffectLarge, bAffectSmall);
+
+	}
+}
