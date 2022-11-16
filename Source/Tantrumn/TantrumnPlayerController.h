@@ -14,6 +14,9 @@ class TANTRUMN_API ATantrumnPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 public:
+
+	virtual void BeginPlay() override;
+
 protected:
 	void SetupInputComponent() override;
 
@@ -30,6 +33,10 @@ protected:
 	void RequestMoveRight(float AxisValue);
 	void RequestLookUp(float AxisValue);
 	void RequestLookRight(float AxisValue);
+	void RequestThrowObject(float AxisValue);
+
+	void RequestPullObject();
+	void RequestStopPullObject();
 
 	UPROPERTY(EditAnywhere, Category = "Look")
 		float BaseLookUpRate = 90.0f;
@@ -39,4 +46,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Movement")
 		float RunningSpeed = 1200.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+		float FlickThreshold = 0.75f;
+
+	float LastAxis = 0.0f;
 };
