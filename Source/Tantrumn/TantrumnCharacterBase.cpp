@@ -282,27 +282,28 @@ void ATantrumnCharacterBase::SphereCastPlayerView()
 			ThrowableActor = nullptr;
 		}
 		return;
-		//UE_LOG(LogTemp, Warning, TEXT("Dot Result: %f"), DotResult);
+	}
+	//UE_LOG(LogTemp, Warning, TEXT("Dot Result: %f"), DotResult);
 
-		FHitResult HitResult;
-		EDrawDebugTrace::Type DebugTrace = CVarDisplayTrace->GetBool() ? EDrawDebugTrace::ForOneFrame : EDrawDebugTrace::None;
-		TArray<AActor*> ActorsToIgnore;
-		ActorsToIgnore.Add(this);
+	FHitResult HitResult;
+	EDrawDebugTrace::Type DebugTrace = CVarDisplayTrace->GetBool() ? EDrawDebugTrace::ForOneFrame : EDrawDebugTrace::None;
+	TArray<AActor*> ActorsToIgnore;
+	ActorsToIgnore.Add(this);
 
-		UKismetSystemLibrary::SphereTraceSingle(GetWorld(), Location, EndPos, 70.0f, UEngineTypes::ConvertToTraceType(ECollisionChannel::ECC_Visibility), false, ActorsToIgnore, DebugTrace, HitResult, true);
-		ProcessTraceResult(HitResult);
+	UKismetSystemLibrary::SphereTraceSingle(GetWorld(), Location, EndPos, 70.0f, UEngineTypes::ConvertToTraceType(ECollisionChannel::ECC_Visibility), false, ActorsToIgnore, DebugTrace, HitResult, true);
+	ProcessTraceResult(HitResult);
 
 #if ENABLE_DRAW_DEBUG
-		if (CVarDisplayTrace->GetBool())
-		{
-			static float FovDeg = 90.0f;
-			DrawDebugCamera(GetWorld(), Location, Rotation, FovDeg);
-			DrawDebugLine(GetWorld(), Location, EndPos, HitResult.bBlockingHit ? FColor::Red : FColor::White);
-			DrawDebugPoint(GetWorld(), EndPos, 70.0f, HitResult.bBlockingHit ? FColor::Red : FColor::White);
-		}
+	if (CVarDisplayTrace->GetBool())
+	{
+		static float FovDeg = 90.0f;
+		DrawDebugCamera(GetWorld(), Location, Rotation, FovDeg);
+		DrawDebugLine(GetWorld(), Location, EndPos, HitResult.bBlockingHit ? FColor::Red : FColor::White);
+		DrawDebugPoint(GetWorld(), EndPos, 70.0f, HitResult.bBlockingHit ? FColor::Red : FColor::White);
+	}
 #endif
 
-	}
+	
 
 }
 
