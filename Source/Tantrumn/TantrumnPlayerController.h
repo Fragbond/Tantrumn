@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "TantrumnGameModeBase.h"
+#include "Sound/SoundCue.h"
 #include "TantrumnPlayerController.generated.h"
 
 /**
@@ -51,4 +53,10 @@ protected:
 		float FlickThreshold = 0.75f;
 
 	float LastAxis = 0.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	USoundCue* JumpSound = nullptr;
+
+	ATantrumnGameModeBase* GameModeRef;
+
 };
