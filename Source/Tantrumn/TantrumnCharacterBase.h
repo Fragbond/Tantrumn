@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "InteractInterface.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Sound/SoundCue.h"
@@ -20,7 +21,7 @@ enum class ECharacterThrowState : uint8
 };
 
 UCLASS()
-class TANTRUMN_API ATantrumnCharacterBase : public ACharacter
+class TANTRUMN_API ATantrumnCharacterBase : public ACharacter, public IInteractInterface
 {
 	GENERATED_BODY()
 
@@ -42,6 +43,8 @@ public:
 	void ResetThrowableObject();
 	void RequestRun();
 	void RequestStopRunning();
+
+	void RequestUseObject();
 
 	void OnThrowableAttached(AThrowableActor* InThrowableActor);
 
@@ -93,6 +96,15 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Fall Impact")
 		float MaxImpactSpeed = 1200.0f;
 
+	UFUNCTION(BlueprintCallable)
+		void HandleItemCollected();
+
+	UFUNCTION(BlueprintImplementableEvent)
+		void ItemCollected();
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		int ItemsCollected = 0;
+
 	//Time in Seconds
 	UPROPERTY(EditAnywhere, Category = "Fall Impact")
 		float MinStunTime = 1.0f;
@@ -133,4 +145,15 @@ private:
 	UPROPERTY()
 		AThrowableActor* ThrowableActor;
 
+	void ApplyEffect_Implementation(EEffectType EffectType, bool bIsBuff) override;
+
+	void EndEffect();
+
+	bool bIsUnderEffect = false;
+	bool bIsEffectBuff = false;
+
+	float DefaultEffectCooldown = 5.0f;
+	float EffectCooldown = 0.0f;
+
+	EEffectType CurrentEffect = EEffectType::None;
 };

@@ -27,7 +27,7 @@ void ATantrumnGameModeBase::PlayerReachedEnd()
 {
 	CurrentGameState = EGameState::GameOver;
 
-	//GameWidget->LevelComplete();
+	GameWidget->LevelComplete();
 	FInputModeUIOnly InputMode;
 	PC->SetInputMode(InputMode);
 	PC->SetShowMouseCursor(true);
@@ -46,4 +46,8 @@ void ATantrumnGameModeBase::DisplayCountdown()
 void ATantrumnGameModeBase::StartGame()
 {
 	CurrentGameState = EGameState::Playing;
+
+	FInputModeGameOnly InputMode;
+	PC->SetInputMode(InputMode);
+	PC->SetShowMouseCursor(false);
 }

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "InteractInterface.h"
 #include "GameFramework/Actor.h"
 #include "ThrowableActor.generated.h"
 
@@ -36,6 +37,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ToggleHighlight(bool bIsOn);
 
+	EEffectType GetEffectType();
+
 protected:
 	enum class EState
 	{
@@ -68,4 +71,7 @@ protected:
 
 	UPROPERTY()
 	AActor* PullActor = nullptr;
+
+	UPROPERTY(EditAnywhere, Category = "Effect")
+	EEffectType EffectType = EEffectType::None;
 };
