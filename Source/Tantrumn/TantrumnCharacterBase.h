@@ -71,6 +71,27 @@ protected:
 	bool PlayThrowMontage();
 	void UnbindMontage();
 
+	UFUNCTION(Server, Reliable)
+		void ServerPullObject(AThrowableActor* InThrowableActor);
+
+	UFUNCTION(Server, Reliable)
+		void ServerRequestPullObject(bool bIsPulling);
+
+	UFUNCTION(Server, Reliable)
+		void ServerRequestThrowObject();
+
+	UFUNCTION(NetMulticast, Reliable)
+		void MulticastRequestThrowObject();
+
+	UFUNCTION(Client, Reliable)
+		void ClientThrowableAttached(AThrowableActor* InThrowableActor);
+
+	UFUNCTION(Server, Reliable)
+		void ServerBeginThrow();
+
+	UFUNCTION(Server, Reliable)
+		void ServerFinishThrow();
+
 	UFUNCTION()
 		void OnMontageBlendingOut(UAnimMontage* Montage, bool bInterrupted);
 
@@ -130,6 +151,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Throw")
 		ECharacterThrowState CharacterThrowState = ECharacterThrowState::None;
+
+	UFUNCTION()
+		void OnRep_CharacterThrowState(const ECharacterThrowState& OldCharacterThrowState);
 
 	UPROPERTY(EditAnywhere, Category = "Throw", meta = (ClampMin = "0.0", Unit = "ms"))
 		float ThrowSpeed = 2000.0f;

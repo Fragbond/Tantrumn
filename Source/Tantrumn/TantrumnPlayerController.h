@@ -18,7 +18,7 @@ class TANTRUMN_API ATantrumnPlayerController : public APlayerController
 public:
 
 	virtual void BeginPlay() override;
-
+	virtual void ReceivedPlayer() override;
 protected:
 	void SetupInputComponent() override;
 
@@ -39,6 +39,12 @@ protected:
 
 	void RequestPullObject();
 	void RequestStopPullObject();
+
+	UPROPERTY(EditAnywhere, Category = "HUD")
+		TSubclassOf<class UUserWidget> HUDClass;
+
+	UPROPERTY()
+		UUserWidget* HUDWidget;
 
 	UPROPERTY(EditAnywhere, Category = "Look")
 		float BaseLookUpRate = 90.0f;

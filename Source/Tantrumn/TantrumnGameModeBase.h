@@ -32,7 +32,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	EGameState GetCurrentGameState() const;
 
-	void PlayerReachedEnd();
+	void PlayerReachedEnd(APlayerController* PlayerController);
+	void ReceivePlayer(APlayerController* PlayerController);
 
 private:
 
@@ -42,10 +43,16 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Game Details")
 	float GameCountdownDuration = 4.0f;
 
+	UFUNCTION(BlueprintCallable, Category = "Game Details")
+		void SetNumExpectedPlayers(uint8 InNumExpectedPlayers) { NumExpectedPlayers = InNumExpectedPlayers; }
+
+	UPROPERTY(EditAnywhere, Category = "Game Details")
+		uint8 NumExpectedPlayers = 1u;
+
 	FTimerHandle TimerHandle;
 
 	UPROPERTY()
-	UTantrumnGameWidget* GameWidget;
+	TMap<APlayerController*, UTantrumnGameWidget*> GameWidgets;
 	UPROPERTY(EditAnywhere, Category = "Widget")
 	TSubclassOf<UTantrumnGameWidget> GameWidgetClass;
 
@@ -53,4 +60,5 @@ private:
 
 	void DisplayCountdown();
 	void StartGame();
+	void AttemptStartGame();
 };
