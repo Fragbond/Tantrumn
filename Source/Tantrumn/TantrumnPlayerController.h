@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
-#include "TantrumnGameModeBase.h"
 #include "Sound/SoundCue.h"
 #include "TantrumnPlayerController.generated.h"
 
-/**
- * 
- */
+class ATantrumnCharacterBase;
+class ATantrumnGameStateBase;
+class UUserWidget;
+
 UCLASS()
 class TANTRUMN_API ATantrumnPlayerController : public APlayerController
 {
@@ -19,6 +19,21 @@ public:
 
 	virtual void BeginPlay() override;
 	virtual void ReceivedPlayer() override;
+
+	virtual void OnPossess(APawn* aPawn) override;
+	virtual void OnUnPossess() override;
+
+	UFUNCTION(Client, Reliable)
+		void ClientDisplayCountdown(float GameCountdownDuration);
+
+	UFUNCTION(Client, Reliable)
+		void ClientRestartGame();
+
+	UFUNCTION(Client, Reliable)
+		void ClientReachedEnd();
+
+	UFUNCTION(Server, Reliable)
+		void ServerRestartLevel();
 protected:
 	void SetupInputComponent() override;
 
@@ -63,6 +78,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Sound")
 	USoundCue* JumpSound = nullptr;
 
-	ATantrumnGameModeBase* GameModeRef;
+	UPROPERTY()
+	ATantrumnGameStateBase* TantrumnGameState;
 
 };

@@ -40,6 +40,7 @@ ATantrumnCharacterBase::ATantrumnCharacterBase()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	bReplicates = true;
+	SetReplicateMovement(true);
 }
 
 void ATantrumnCharacterBase::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
@@ -238,6 +239,12 @@ void ATantrumnCharacterBase::RequestThrowObject()
 			ResetThrowableObject();
 		}
 	}
+}
+
+bool ATantrumnCharacterBase::ServerRequestThrowObject_Validate()
+{
+	//can check the state or if the throwable actor exists etc to prevent this being broadcasted
+	return true;
 }
 
 void ATantrumnCharacterBase::ServerRequestThrowObject_Implementation()
@@ -578,4 +585,14 @@ void ATantrumnCharacterBase::ServerFinishThrow_Implementation()
 		}
 	}
 	ThrowableActor = nullptr;
+}
+
+void ATantrumnCharacterBase::ServerPlayCelebrateMontage_Implementation()
+{
+	MulticastPlayCelebrateMontage();
+}
+
+void ATantrumnCharacterBase::MulticastPlayCelebrateMontage_Implementation()
+{
+	//PlayCelebrateMontage();
 }

@@ -2,11 +2,14 @@
 
 
 #include "TantrumnPlayerController.h"
+#include "TantrumnGameStateBase.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "TantrumnCharacterBase.h"
 #include "TantrumnGameModeBase.h"
+#include "TantrumnPlayerState.h"
+#include "TantrumnGameInstance.h"
 
 
 static TAutoConsoleVariable<bool> CVarDisplayLaunchInputDelta(
@@ -18,7 +21,7 @@ static TAutoConsoleVariable<bool> CVarDisplayLaunchInputDelta(
 void ATantrumnPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-	GameModeRef = Cast<ATantrumnGameModeBase>(GetWorld()->GetAuthGameMode());
+	TantrumnGameState = GetWorld()->GetGameState<ATantrumnGameStateBase>();
 }
 
 void ATantrumnPlayerController::SetupInputComponent()
@@ -48,7 +51,7 @@ void ATantrumnPlayerController::SetupInputComponent()
 
 void ATantrumnPlayerController::RequestJump()
 {
-	if (!GameModeRef || GameModeRef->GetCurrentGameState() != EGameState::Playing) { return; }
+	//if (!GameModeRef || GameModeRef->GetCurrentGameState() != EGameState::Playing) { return; }
 	if (GetCharacter())
 	{
 		GetCharacter()->Jump();
@@ -63,7 +66,7 @@ void ATantrumnPlayerController::RequestJump()
 
 void ATantrumnPlayerController::RequestMoveForward(float AxisValue)
 {
-	if (!GameModeRef || GameModeRef->GetCurrentGameState() != EGameState::Playing) { return; }
+	//if (!GameModeRef || GameModeRef->GetCurrentGameState() != EGameState::Playing) { return; }
 	if (AxisValue != 0.f)
 	{
 		FRotator const ControlSpaceRot = GetControlRotation();
@@ -73,7 +76,7 @@ void ATantrumnPlayerController::RequestMoveForward(float AxisValue)
 
 void ATantrumnPlayerController::RequestMoveRight(float AxisValue)
 {
-	if (!GameModeRef || GameModeRef->GetCurrentGameState() != EGameState::Playing) { return; }
+	//if (!GameModeRef || GameModeRef->GetCurrentGameState() != EGameState::Playing) { return; }
 	if (AxisValue != 0.f)
 	{
 		FRotator const ControlSpaceRot = GetControlRotation();
@@ -93,7 +96,7 @@ void ATantrumnPlayerController::RequestLookRight(float AxisValue)
 
 void ATantrumnPlayerController::RequestRun()
 {
-	if (!GameModeRef || GameModeRef->GetCurrentGameState() != EGameState::Playing) { return; }
+	//if (!GameModeRef || GameModeRef->GetCurrentGameState() != EGameState::Playing) { return; }
 	if (GetCharacter())
 	{
 		GetCharacter()->GetCharacterMovement()->MaxWalkSpeed += RunningSpeed;
@@ -102,7 +105,7 @@ void ATantrumnPlayerController::RequestRun()
 
 void ATantrumnPlayerController::RequestCrouch()
 {
-	if (!GameModeRef || GameModeRef->GetCurrentGameState() != EGameState::Playing) { return; }
+	//if (!GameModeRef || GameModeRef->GetCurrentGameState() != EGameState::Playing) { return; }
 	if (GetCharacter())
 	{
 		GetCharacter()->Crouch();
@@ -135,7 +138,7 @@ void ATantrumnPlayerController::RequestStopJump()
 
 void ATantrumnPlayerController::RequestPullObject()
 {
-	if (!GameModeRef || GameModeRef->GetCurrentGameState() != EGameState::Playing) { return; }
+	//if (!GameModeRef || GameModeRef->GetCurrentGameState() != EGameState::Playing) { return; }
 	if (ATantrumnCharacterBase* TantrumnCharacterBase = Cast<ATantrumnCharacterBase>(GetCharacter()))
 	{
 		TantrumnCharacterBase->RequestPullObject();
@@ -152,7 +155,7 @@ void ATantrumnPlayerController::RequestStopPullObject()
 
 void ATantrumnPlayerController::RequestThrowObject(float AxisValue)
 {
-	if (!GameModeRef || GameModeRef->GetCurrentGameState() != EGameState::Playing) { return; }
+	//if (!GameModeRef || GameModeRef->GetCurrentGameState() != EGameState::Playing) { return; }
 	if (ATantrumnCharacterBase* TantrumnCharacterBase = Cast<ATantrumnCharacterBase>(GetCharacter()))
 	{
 		if (TantrumnCharacterBase->CanThrowObject())
@@ -191,18 +194,84 @@ void ATantrumnPlayerController::RequestThrowObject(float AxisValue)
 void ATantrumnPlayerController::ReceivedPlayer()
 {
 	Super::ReceivedPlayer();
-	GameModeRef = Cast<ATantrumnGameModeBase>(GetWorld()->GetAuthGameMode());
-	if (ensureMsgf(GameModeRef, TEXT("ATantrumnPlayerController::ReceivedPlayer missing GameMode Reference")))
-	{
-		GameModeRef->ReceivePlayer(this);
-	}
 
-	if (HUDClass)
+	if (IsLocalController())
 	{
-		HUDWidget = CreateWidget(this, HUDClass);
-		if (HUDWidget)
+		if (HUDClass)
 		{
-			HUDWidget->AddToPlayerScreen();
+			HUDWidget = CreateWidget(this, HUDClass);
+			if (HUDWidget)
+			{
+				//HUDWidget->AddToViewport();
+				HUDWidget->AddToPlayerScreen();
+			}
 		}
 	}
+}
+
+void ATantrumnPlayerController::ServerRestartLevel_Implementation()
+{
+	//GetWorld()->ServerTravel(TEXT("?restart"));
+	ATantrumnGameModeBase* TantrumnGameMode = GetWorld()->GetAuthGameMode<ATantrumnGameModeBase>();
+	if (ensureMsgf(TantrumnGameMode, TEXT("ATantrumnPlayerController::ServerRestartLevel_Implementation Invalid GameMode")))
+	{
+		TantrumnGameMode->RestartGame();
+
+	}
+	/*RestartPlayer()
+	GetWorld()->GetCurrentLevel()->GetName()
+	GetWorld()->ServerTravel(TEXT("?restart"));*/
+}
+
+void ATantrumnPlayerController::ClientDisplayCountdown_Implementation(float GameCountdownDuration)
+{
+	if (UTantrumnGameInstance* TantrumnGameInstance = GetWorld()->GetGameInstance<UTantrumnGameInstance>())
+	{
+		TantrumnGameInstance->DisplayCountdown(GameCountdownDuration, this);
+	}
+}
+
+void ATantrumnPlayerController::ClientRestartGame_Implementation()
+{
+	if (ATantrumnPlayerState* TantrumnPlayerState = GetPlayerState<ATantrumnPlayerState>())
+	{
+		if (UTantrumnGameInstance* TantrumnGameInstance = GetWorld()->GetGameInstance<UTantrumnGameInstance>())
+		{
+			TantrumnGameInstance->RestartGame(this);
+		}
+	}
+}
+
+void ATantrumnPlayerController::ClientReachedEnd_Implementation()
+{
+	//this needs to be named better, it's just displaying the end screen
+	//this will be seperate, as it will come after the montage...
+	//client gets hud authority needs to replicate the montage
+
+	if (ATantrumnCharacterBase* TantrumnCharacterBase = Cast<ATantrumnCharacterBase>(GetCharacter()))
+	{
+		TantrumnCharacterBase->ServerPlayCelebrateMontage();
+		TantrumnCharacterBase->GetCharacterMovement()->DisableMovement();
+	}
+
+	if (UTantrumnGameInstance* TantrumnGameInstance = GetWorld()->GetGameInstance<UTantrumnGameInstance>())
+	{
+		//call the level complete event for the widget...
+	}
+
+	FInputModeUIOnly InputMode;
+	SetInputMode(InputMode);
+	SetShowMouseCursor(true);
+}
+
+void ATantrumnPlayerController::OnPossess(APawn* aPawn)
+{
+	Super::OnPossess(aPawn);
+	UE_LOG(LogTemp, Warning, TEXT("OnPossess: %s"), *GetName());
+}
+
+void ATantrumnPlayerController::OnUnPossess()
+{
+	Super::OnUnPossess();
+	UE_LOG(LogTemp, Warning, TEXT("OnUnPossess: %s"), *GetName());
 }

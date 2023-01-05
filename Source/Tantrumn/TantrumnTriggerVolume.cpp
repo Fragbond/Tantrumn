@@ -3,7 +3,7 @@
 
 #include "TantrumnTriggerVolume.h"
 #include "TantrumnCharacterBase.h"
-#include "TantrumnGameModeBase.h"
+#include "TantrumnGameStateBase.h"
 
 ATantrumnTriggerVolume::ATantrumnTriggerVolume()
 {
@@ -13,14 +13,17 @@ ATantrumnTriggerVolume::ATantrumnTriggerVolume()
 void ATantrumnTriggerVolume::BeginPlay()
 {
 	Super::BeginPlay();
-	GameModeRef = GetWorld()->GetAuthGameMode<ATantrumnGameModeBase>();
 }
 
 void ATantrumnTriggerVolume::OnOverlapBegin(AActor* OverlappedActor, AActor* OtherActor)
 {
-	if (ATantrumnCharacterBase* TantrumnCharacterBase = Cast<ATantrumnCharacterBase>(OtherActor))
+	if (HasAuthority())
 	{
-		APlayerController* PlayerController = TantrumnCharacterBase->GetController<APlayerController>();
-		GameModeRef->PlayerReachedEnd(PlayerController);
+		if (ATantrumnGameStateBase* TantrumnGameState = GetWorld()->GetGameState<ATantrumnGameStateBase>())
+		{
+			ATantrumnCharacterBase* TantrumnCharacterBase = Cast<ATantrumnCharacterBase>(OtherActor);
+			TantrumnGameState->OnPlayerReachedEnd(TantrumnCharacterBase);
+		}
 	}
+
 }

@@ -59,6 +59,9 @@ public:
 	UFUNCTION(BlueprintPure)
 		bool IsStunned() const { return bIsStunned; }
 
+	UFUNCTION(Server, Reliable)
+		void ServerPlayCelebrateMontage();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -77,9 +80,6 @@ protected:
 	UFUNCTION(Server, Reliable)
 		void ServerRequestPullObject(bool bIsPulling);
 
-	UFUNCTION(Server, Reliable)
-		void ServerRequestThrowObject();
-
 	UFUNCTION(NetMulticast, Reliable)
 		void MulticastRequestThrowObject();
 
@@ -88,6 +88,12 @@ protected:
 
 	UFUNCTION(Server, Reliable)
 		void ServerBeginThrow();
+
+	UFUNCTION(Server, Reliable, WithValidation)
+		void ServerRequestThrowObject();
+
+	UFUNCTION(NetMulticast, Reliable)
+		void MulticastPlayCelebrateMontage();
 
 	UFUNCTION(Server, Reliable)
 		void ServerFinishThrow();
@@ -149,7 +155,7 @@ protected:
 	bool bIsPullingObject = false;
 	bool bIsThrowingObject = false;*/
 
-	UPROPERTY(VisibleAnywhere, Category = "Throw")
+	UPROPERTY(VisibleAnywhere,ReplicatedUsing = OnRep_CharacterThrowState, Category = "Throw")
 		ECharacterThrowState CharacterThrowState = ECharacterThrowState::None;
 
 	UFUNCTION()
