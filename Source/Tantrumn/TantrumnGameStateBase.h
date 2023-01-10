@@ -6,10 +6,7 @@
 #include "GameFramework/GameStateBase.h"
 #include "TantrumnGameStateBase.generated.h"
 
-/**
- * 
- */
- // Enum to track the current state of the game 
+// Enum to track the current state of the game 
 UENUM(BlueprintType)
 enum class EGameState : uint8
 {

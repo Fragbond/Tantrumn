@@ -29,9 +29,10 @@ public:
 protected:
 	UFUNCTION()
 		void OnGameStateSet(AGameStateBase* GameStateBase);
+
 private:
 	UPROPERTY(EditAnywhere, Category = "Widget")
-		TSubclassOf<UTantrumnGameWidget> GameWidgetClass;
+		TSubclassOf<UTantrumnGameWidget> GameWidgetClass; // Exposed class to check the type of widget to display
 
 	UPROPERTY()
 		TMap<APlayerController*, UTantrumnGameWidget*> GameWidgets;

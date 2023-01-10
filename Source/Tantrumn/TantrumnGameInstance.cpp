@@ -17,6 +17,8 @@ void UTantrumnGameInstance::DisplayCountdown(float GameCountdownDuration, ATantr
 			PlayerGameWidget = CreateWidget<UTantrumnGameWidget>(TantrumnPlayerController, GameWidgetClass);
 			if (PlayerGameWidget)
 			{
+				//only do this once
+				//atm we never remove this as it has the race time
 				PlayerGameWidget->AddToPlayerScreen();
 				GameWidgets.Add(TantrumnPlayerController, PlayerGameWidget);
 			}

@@ -7,20 +7,19 @@
 #include "TantrumnGameWidget.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class TANTRUMN_API UTantrumnGameWidget : public UUserWidget
 {
 	GENERATED_BODY()
-	
+
 public:
+	UFUNCTION(BlueprintImplementableEvent)
+		void StartCountdown(float CountdownTime, class ATantrumnPlayerController* TantrumnPlayerController);
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void StartCountdown(float CountdownTime, class ATantrumnPlayerController* TantrumnPlayerController);
-
-	UFUNCTION(BlueprintImplementableEvent)
-	void LevelComplete();
+		void LevelComplete();
 
 	UFUNCTION(BlueprintImplementableEvent)
 		void DisplayResults();

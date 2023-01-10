@@ -14,71 +14,78 @@ class UUserWidget;
 UCLASS()
 class TANTRUMN_API ATantrumnPlayerController : public APlayerController
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 public:
 
-	virtual void BeginPlay() override;
-	virtual void ReceivedPlayer() override;
+    virtual void BeginPlay() override;
+    //in local mp we need to make sure the controller has received the player in order to correctly set up the hud
+    virtual void ReceivedPlayer() override;
 
-	virtual void OnPossess(APawn* aPawn) override;
-	virtual void OnUnPossess() override;
+    virtual void OnPossess(APawn* aPawn) override;
+    virtual void OnUnPossess() override;
 
-	UFUNCTION(Client, Reliable)
-		void ClientDisplayCountdown(float GameCountdownDuration);
+    UFUNCTION(Client, Reliable)
+        void ClientDisplayCountdown(float GameCountdownDuration);
 
-	UFUNCTION(Client, Reliable)
-		void ClientRestartGame();
+    UFUNCTION(Client, Reliable)
+        void ClientRestartGame();
 
-	UFUNCTION(Client, Reliable)
-		void ClientReachedEnd();
+    UFUNCTION(Client, Reliable)
+        void ClientReachedEnd();
 
-	UFUNCTION(Server, Reliable)
-		void ServerRestartLevel();
+    UFUNCTION(Server, Reliable)
+        void ServerRestartLevel();
 protected:
-	void SetupInputComponent() override;
 
-	void RequestJump();
-	void RequestStopJump();
+    void SetupInputComponent() override;
 
-	void RequestRun();
-	void RequestStopRunning();
+    bool CanProcessRequest() const;
 
-	void RequestCrouch();
-	void RequestUnCrouch();
+    void RequestMoveForward(float AxisValue);
+    void RequestMoveRight(float AxisValue);
+    void RequestLookUp(float AxisValue);
+    void RequestLookRight(float AxisValue);
+    void RequestThrowObject(float AxisValue);
 
-	void RequestMoveForward(float AxisValue);
-	void RequestMoveRight(float AxisValue);
-	void RequestLookUp(float AxisValue);
-	void RequestLookRight(float AxisValue);
-	void RequestThrowObject(float AxisValue);
+    void RequestPullObject();
+    void RequestStopPullObject();
 
-	void RequestPullObject();
-	void RequestStopPullObject();
+    void RequestJump();
+    void RequestStopJump();
 
-	UPROPERTY(EditAnywhere, Category = "HUD")
-		TSubclassOf<class UUserWidget> HUDClass;
+    void RequestCrouchStart();
+    void RequestCrouchEnd();
 
-	UPROPERTY()
-		UUserWidget* HUDWidget;
+    void RequestSprintStart();
+    void RequestSprintEnd();
 
-	UPROPERTY(EditAnywhere, Category = "Look")
-		float BaseLookUpRate = 90.0f;
+    UPROPERTY(EditAnywhere, Category = "HUD")
+        TSubclassOf<class UUserWidget> HUDClass;
 
-	UPROPERTY(EditAnywhere, Category = "Look")
-		float BaseLookRightRate = 90.0f;
+    UPROPERTY()
+        UUserWidget* HUDWidget;
 
-	UPROPERTY(EditAnywhere, Category = "Movement")
-		float RunningSpeed = 1200.0f;
+    /** Base lookup rate, in deg/sec. Other scaling may affect final lookup rate. */
+    UPROPERTY(EditAnywhere, Category = "Look")
+        float BaseLookUpRate = 90.0f;
 
-	UPROPERTY(EditAnywhere, Category = "Input")
-		float FlickThreshold = 0.75f;
+    /** Base lookright rate, in deg/sec. Other scaling may affect final lookup rate. */
+    UPROPERTY(EditAnywhere, Category = "Look")
+        float BaseLookRightRate = 90.0f;
 
-	float LastAxis = 0.0f;
+    /**Sound Cue for Jumping Sound. */
 
-	UPROPERTY(EditAnywhere, Category = "Sound")
-	USoundCue* JumpSound = nullptr;
+    UPROPERTY(EditAnywhere, Category = "Sound")
+        USoundCue* JumpSound = nullptr;
 
-	UPROPERTY()
-	ATantrumnGameStateBase* TantrumnGameState;
+    UPROPERTY()
+        ATantrumnGameStateBase* TantrumnGameState;
+
+    //used to determine flick of axis
+    //float LastDelta = 0.0f;
+    float LastAxis = 0.0f;
+
+    UPROPERTY(EditAnywhere, Category = "Input")
+        float FlickThreshold = 0.70f;
 
 };

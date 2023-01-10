@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 
-#include "GameFramework/GameModeBase.h"
 #include "TantrumnGameWidget.h"
+#include "GameFramework/GameModeBase.h"
 #include "TantrumnGameModeBase.generated.h"
 
 class AController;
@@ -46,5 +46,4 @@ private:
 	void AttemptStartGame();
 	void DisplayCountdown();
 	void StartGame();
-
 };

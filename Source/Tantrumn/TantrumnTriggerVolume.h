@@ -8,7 +8,7 @@
 
 class ATantrumnGameModeBase;
 
-UCLASS()
+UCLASS(Blueprintable, BlueprintType)
 class TANTRUMN_API ATantrumnTriggerVolume : public ATriggerVolume
 {
 	GENERATED_BODY()
@@ -26,5 +26,4 @@ private:
 	UFUNCTION()
 	void OnOverlapBegin(class AActor* OverlappedActor, class AActor* OtherActor);
 
-	ATantrumnGameModeBase* GameModeRef;
 };
