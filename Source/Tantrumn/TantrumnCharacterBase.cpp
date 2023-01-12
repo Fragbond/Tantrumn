@@ -504,6 +504,7 @@ void ATantrumnCharacterBase::ProcessTraceResult(const FHitResult& HitResult)
 		if (GetVelocity().SizeSquared() < 100.0f)
 		{
 			ServerPullObject(ThrowableActor);
+			CharacterThrowState = ECharacterThrowState::Pulling;
 			//PullObject(ThrowableActor);
 			ThrowableActor->ToggleHighlight(false);
 			//ThrowableActor = nullptr;

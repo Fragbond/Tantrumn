@@ -9,6 +9,7 @@
 #include "TantrumnGameStateBase.h"
 #include "TantrumnPlayerController.h"
 #include "TantrumnPlayerState.h"
+#include "TantrumnAIController.h"
 
 ATantrumnGameModeBase::ATantrumnGameModeBase()
 {
@@ -90,6 +91,20 @@ void ATantrumnGameModeBase::StartGame()
 			}
 		}
 	}
+
+	for (FConstControllerIterator Iterator = GetWorld()->GetControllerIterator(); Iterator; ++Iterator)
+	{
+		ATantrumnAIController* TantrumnAIController = Cast<ATantrumnAIController>(Iterator->Get());
+		if (TantrumnAIController)
+		{
+			ATantrumnPlayerState* PlayerState = TantrumnAIController->GetPlayerState<ATantrumnPlayerState>();
+			if (PlayerState)
+			{
+				PlayerState->SetCurrentState(EPlayerGameState::Playing);
+				PlayerState->SetIsWinner(false);
+			}
+		}
+	}
 }
 
 void ATantrumnGameModeBase::RestartPlayer(AController* NewPlayer)
@@ -114,6 +129,15 @@ void ATantrumnGameModeBase::RestartPlayer(AController* NewPlayer)
 
 void ATantrumnGameModeBase::RestartGame()
 {
+	for (FConstControllerIterator Iterator = GetWorld()->GetControllerIterator(); Iterator; ++Iterator)
+	{
+		ATantrumnAIController* TantrumnAIController = Cast<ATantrumnAIController>(Iterator->Get());
+		if (TantrumnAIController && TantrumnAIController->GetPawn())
+		{
+			TantrumnAIController->Destroy(true);
+		}
+	}
+
 	ResetLevel();
 	//RestartGame();
 	//GetWorld()->ServerTravel(TEXT("?Restart"), false);
