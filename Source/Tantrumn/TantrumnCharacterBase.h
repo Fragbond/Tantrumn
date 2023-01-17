@@ -56,6 +56,10 @@ public:
 	UFUNCTION(BlueprintPure)
 		bool IsPullingObject() const { return CharacterThrowState == ECharacterThrowState::RequestingPull || CharacterThrowState == ECharacterThrowState::Pulling; }
 
+	//this function is for the AI
+	UFUNCTION(BlueprintCallable)
+		bool AttemptPullObjectAtLocation(const FVector& InLocation);
+
 	UFUNCTION(BlueprintPure)
 		bool IsThrowing() const { return CharacterThrowState == ECharacterThrowState::Throwing; }
 
@@ -81,7 +85,7 @@ protected:
 	void SphereCastPlayerView();
 	void SphereCastActorTransform();
 	void LineCastActorTransform();
-	void ProcessTraceResult(const FHitResult& HitResult);
+	void ProcessTraceResult(const FHitResult& HitResult, bool bHighlight = true);
 
 	/*UFUNCTION(Server, Reliable)
 	void PullObject();*/
