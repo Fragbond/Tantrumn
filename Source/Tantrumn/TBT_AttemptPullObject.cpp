@@ -1,13 +1,13 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "TBT_TaskAttemptPullObjective.h"
+#include "TBT_AttemptPullObject.h"
 #include "TantrumnAIController.h"
 #include "TantrumnCharacterBase.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Vector.h"
 
-UTBT_TaskAttemptPullObjective::UTBT_TaskAttemptPullObjective(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+UTBT_AttemptPullObject::UTBT_AttemptPullObject(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	NodeName = "Attempt Pull Object";
 	bNotifyTick = false;
@@ -15,10 +15,10 @@ UTBT_TaskAttemptPullObjective::UTBT_TaskAttemptPullObjective(const FObjectInitia
 
 
 	// accept only vectors
-	BlackboardKey.AddVectorFilter(this, GET_MEMBER_NAME_CHECKED(UTBT_TaskAttemptPullObjective, BlackboardKey));
+	BlackboardKey.AddVectorFilter(this, GET_MEMBER_NAME_CHECKED(UTBT_AttemptPullObject, BlackboardKey));
 }
 
-EBTNodeResult::Type UTBT_TaskAttemptPullObjective::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+EBTNodeResult::Type UTBT_AttemptPullObject::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
