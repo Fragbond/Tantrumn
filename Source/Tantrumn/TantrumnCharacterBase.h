@@ -10,6 +10,8 @@
 
 class AThrowableActor;
 
+DECLARE_MULTICAST_DELEGATE(FOnInteractionStart);
+
 UENUM(BlueprintType)
 enum class ECharacterThrowState : uint8
 {
@@ -77,6 +79,8 @@ public:
 
 	UFUNCTION(Server, Reliable)
 		void ServerPlayCelebrateMontage();
+
+	FOnInteractionStart OnInteractionStart;
 
 protected:
 	// Called when the game starts or when spawned
